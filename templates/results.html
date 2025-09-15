@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #4a6cf7 0%, #6a11cb 100%);
+        }
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        .progress {
+            height: 1.5rem;
+            border-radius: 0.75rem;
+            overflow: visible;
+        }
+        .progress-bar {
+            position: relative;
+            border-radius: 0.75rem;
+        }
+        .progress-bar span {
+            position: absolute;
+            right: 10px;
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+        .skill-badge {
+            margin: 0.2rem;
+            font-size: 0.9rem;
+            background: #e9ecef;
+            color: #495057;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+        }
+        .department-header {
+            background: linear-gradient(135deg, #4a6cf7 0%, #6a11cb 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 1rem 1rem 0 0;
+            margin: -1rem -1rem 1rem -1rem;
+        }
+        .job-match-card {
+            transition: transform 0.3s;
+            border: 1px solid rgba(0,0,0,0.125);
+            border-radius: 0.75rem;
+        }
+        .job-match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .best-match-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ffc107;
+            color: #000;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        .back-btn {
+            background: linear-gradient(135deg, #4a6cf7 0%, #6a11cb 100%);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            color: white;
+        }
+        .contact-info {
+            background: #e9ecef;
+            padding: 1rem;
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-search me-2"></i>Resume Analyzer
+            </a>
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left me-2"></i>Back to Upload
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-5 fw-bold text-primary">Resume Analysis Results</h1>
+                    <p class="lead">We've analyzed your resume and found the following insights</p>
+                </div>
+
+                <!-- Summary Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title mb-4"><i class="fas fa-user-circle me-2 text-primary"></i>Candidate Summary</h3>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Experience Level:</strong> <span class="badge bg-primary">{{ analysis.experience_level }}</span></p>
+                                <p><strong>Years of Experience:</strong> {{ analysis.experience }} years</p>
+                                <p><strong>Education:</strong> {{ analysis.education }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="contact-info">
+                                    <p><strong><i class="fas fa-envelope me-2"></i>Email:</strong> {{ analysis.contact.email }}</p>
+                                    <p><strong><i class="fas fa-phone me-2"></i>Phone:</strong> {{ analysis.contact.phone }}</p>
+                                    <p><strong><i class="fas fa-certificate me-2"></i>Certifications:</strong> {{ analysis.certifications|length }} found</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title mb-4"><i class="fas fa-tools me-2 text-primary"></i>Skills Detected</h3>
+                        <div class="d-flex flex-wrap">
+                            {% for skill in analysis.skills %}
+                            <span class="skill-badge">{{ skill }}</span>
+                            {% else %}
+                            <p class="text-muted">No specific skills detected</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Best Match Card -->
+                <div class="card border-primary">
+                    <div class="card-body position-relative">
+                        <span class="best-match-badge">Best Match</span>
+                        <h3 class="card-title mb-4"><i class="fas fa-star me-2 text-warning"></i>Recommended Role</h3>
+                        <h4 class="text-primary">{{ analysis.best_match[0] }}</h4>
+                        <p class="text-muted">{{ jobs[analysis.best_match[0]].department }}</p>
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ analysis.best_match[1] }}%;" 
+                                 aria-valuenow="{{ analysis.best_match[1] }}" aria-valuemin="0" aria-valuemax="100">
+                                <span>{{ analysis.best_match[1] }}% Match</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Required Skills:</h6>
+                                <ul class="list-unstyled">
+                                    {% for skill in jobs[analysis.best_match[0]].skills[:5] %}
+                                    <li><i class="fas fa-check-circle text-success me-2"></i>{{ skill }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Experience:</h6>
+                                <p>Minimum: {{ jobs[analysis.best_match[0]].min_experience }}+ years<br>
+                                Senior: {{ jobs[analysis.best_match[0]].senior_level }}+ years</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Matches by Department -->
+                <h3 class="mb-4"><i class="fas fa-building me-2 text-primary"></i>Job Matches by Department</h3>
+                
+                {% for department, jobs in analysis.jobs_by_department.items() %}
+                <div class="card">
+                    <div class="department-header">
+                        <h4 class="mb-0">{{ department }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for job, score in jobs.items() %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card job-match-card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ job }}</h5>
+                                        <div class="progress mb-3">
+                                            <div class="progress-bar 
+                                                {% if score >= 80 %}bg-success
+                                                {% elif score >= 60 %}bg-primary
+                                                {% elif score >= 40 %}bg-info
+                                                {% else %}bg-warning{% endif %}" 
+                                                role="progressbar" style="width: {{ score }}%;" 
+                                                aria-valuenow="{{ score }}" aria-valuemin="0" aria-valuemax="100">
+                                                <span>{{ score }}% Match</span>
+                                            </div>
+                                        </div>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                Min. Experience: {{ jobs[job].min_experience }}+ years
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    No strong job matches found. Consider adding more skills and experience to your resume.
+                </div>
+                {% endfor %}
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                    <a href="/" class="btn btn-primary btn-lg px-5 me-md-2">
+                        <i class="fas fa-upload me-2"></i>Analyze Another Resume
+                    </a>
+                    <button class="btn btn-outline-primary btn-lg px-5" onclick="window.print()">
+                        <i class="fas fa-print me-2"></i>Print Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Resume Templates Section -->
+<div class="card mt-5">
+    <div class="card-body">
+        <h3 class="card-title mb-4"><i class="fas fa-file-alt me-2 text-primary"></i>Resume Templates</h3>
+        <p class="text-muted mb-4">Based on your profile, we recommend these resume templates:</p>
+        
+        <div class="row">
+            {% for template in templates %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ template.name }}</h5>
+                        <p class="card-text">{{ template.description }}</p>
+                        <p class="text-muted"><small>{{ template.category }} Template</small></p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <form action="/download_resume/{{ template.id }}" method="post">
+                            <input type="hidden" name="name" value="{{ analysis.name }}">
+                            <input type="hidden" name="skills" value="{{ analysis.skills|join(',') }}">
+                            <input type="hidden" name="experience" value="{{ analysis.experience }}">
+                            <input type="hidden" name="degree" value="{{ analysis.education.degrees[0].degree if analysis.education.degrees else 'Not specified' }}">
+                            <input type="hidden" name="institution" value="{{ analysis.education.degrees[0].institution if analysis.education.degrees else 'Not specified' }}">
+                            <input type="hidden" name="year" value="{{ analysis.education.degrees[0].year if analysis.education.degrees else 'Not specified' }}">
+                            <input type="hidden" name="certifications" value="{{ analysis.certifications|join(',') }}">
+                            <input type="hidden" name="email" value="{{ analysis.contact.email }}">
+                            <input type="hidden" name="phone" value="{{ analysis.contact.phone }}">
+                            <input type="hidden" name="best_match" value="{{ analysis.best_match[0] }}">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-download me-2"></i>Download Template
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
